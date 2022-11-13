@@ -1,0 +1,33 @@
+{
+  "name": "front",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build --force --debug",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "process": "ts-node-esm -P tsconfig.node.json process.ts",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "@tsconfig/svelte": "^3.0.0",
+    "@types/node": "^18.11.9",
+    "autoprefixer": "^10.4.13",
+    "browser-assert": "^1.2.1",
+    "fuse.js": "^6.6.2",
+    "pinyin-utils": "^2.32.0",
+    "postcss": "^8.4.19",
+    "rxjs": "^7.5.7",
+    "sass": "^1.56.1",
+    "slugify": "^1.6.5",
+    "svelte": "^3.52.0",
+    "svelte-check": "^2.9.2",
+    "svelte-preprocess": "^4.10.7",
+    "tailwindcss": "^3.2.4",
+    "tslib": "^2.4.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3"
+  }
+}
