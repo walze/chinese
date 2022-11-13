@@ -59,7 +59,7 @@ jobs:
 
       - name: Test & Build
         run: |
-          pnpm test &
+          pnpm process &
           pnpm build &
           wait
 
