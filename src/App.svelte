@@ -13,7 +13,7 @@
 
   import Fuse from 'fuse.js';
 
-  const data = fromFetch('/cedict.json').pipe(
+  const data = fromFetch('./cedict.json').pipe(
     mergeMap((r) => r.json() as Promise<Data>),
   );
 
