@@ -59,9 +59,7 @@ jobs:
 
       - name: Test & Build
         run: |
-          pnpm process &
-          pnpm build &
-          wait
+          pnpm process && pnpm build
 
       - name: Upload build to Pages
         uses: actions/upload-pages-artifact@main
