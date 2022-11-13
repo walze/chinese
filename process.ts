@@ -14,8 +14,11 @@ const file = createReadStream('cedict.txt', {
 });
 const regex = /(.*)\s\[(.*)\]\s\/(.*)\//giu;
 
-unlink('public/cedict.json', console.log);
-
+try {
+  unlink('public/cedict.json', console.log);
+} catch (error) {
+  console.error(error);
+}
 const json = createWriteStream('public/cedict.json', {
   encoding: 'utf8',
   autoClose: true,
