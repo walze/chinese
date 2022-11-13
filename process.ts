@@ -14,7 +14,7 @@ const file = createReadStream('cedict.txt', {
 });
 const regex = /(.*)\s\[(.*)\]\s\/(.*)\//giu;
 
-unlink('cedict.json', console.log);
+unlink('public/cedict.json', console.log);
 
 const json = createWriteStream('public/cedict.json', {
   encoding: 'utf8',
@@ -22,8 +22,6 @@ const json = createWriteStream('public/cedict.json', {
   flags: 'a',
   emitClose: true,
 });
-
-json.write('[');
 
 from(file)
   .pipe(
@@ -39,13 +37,13 @@ from(file)
       ),
     ),
     filter((a) => a.length > 0),
+    toArray(),
   )
   .subscribe({
     next: (xs) => {
-      json.write(`${JSON.stringify(xs)},\r\n`);
+      json.write(JSON.stringify(xs));
     },
     complete: () => {
-      json.write(']');
       json.close();
     },
   });
