@@ -4,7 +4,7 @@ import slugify from 'slugify';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '.',
+  base: './',
   plugins: [svelte()],
   optimizeDeps: {
     disabled: false,
