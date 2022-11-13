@@ -1,21 +1,11 @@
 <script lang="ts">
-  import {
-    BehaviorSubject,
-    debounceTime,
-    lastValueFrom,
-    mergeMap,
-  } from 'rxjs';
-  import { fromFetch } from 'rxjs/fetch';
-  import List from './lib/List.svelte';
-  import type { Data, ItemObject } from './vite-env';
-
+  import Fuse from 'fuse.js';
+  import { BehaviorSubject, debounceTime } from 'rxjs';
   import { onMount } from 'svelte';
 
-  import Fuse from 'fuse.js';
-
-  const data = fromFetch('./cedict.json').pipe(
-    mergeMap((r) => r.json() as Promise<Data>),
-  );
+  import List from './lib/List.svelte';
+  import type { ItemObject } from './vite-env';
+  import dict from './cedict.json';
 
   const fuse = new Fuse<ItemObject>([], {
     includeScore: true,
@@ -23,13 +13,11 @@
   });
 
   onMount(async () => {
-    const d = (await lastValueFrom(data)).map(
-      ([hanzi, pinyin, def]) => ({
-        hanzi,
-        pinyin,
-        def,
-      }),
-    );
+    const d = dict.map(([hanzi, pinyin, def]) => ({
+      hanzi,
+      pinyin,
+      def,
+    }));
 
     fuse.setCollection(d);
   });
