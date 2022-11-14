@@ -1,13 +1,5 @@
 import { createReadStream, createWriteStream, unlink } from 'fs';
-import {
-  filter,
-  from,
-  map,
-  mergeAll,
-  mergeMap,
-  take,
-  toArray,
-} from 'rxjs';
+import { filter, map, mergeMap, toArray } from 'rxjs';
 
 import { fromFetch } from 'rxjs/fetch';
 
@@ -22,15 +14,8 @@ try {
   console.error(error);
 }
 
-const gzip = createWriteStream('./cedict.txt', {
-  encoding: 'utf8',
-  autoClose: true,
-});
-
-const json = createWriteStream('./public/cedict.json', {
-  encoding: 'utf8',
-  autoClose: true,
-});
+const gzip = createWriteStream('./cedict.txt');
+const json = createWriteStream('./public/cedict.json');
 
 fromFetch(
   'https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz',
@@ -41,15 +26,11 @@ fromFetch(
     map((r) => r.toString()),
     map((s) => gzip.write(s)),
     map(() => gzip.close()),
-    mergeMap(() =>
-      createReadStream('cedict.txt', {
-        encoding: 'utf8',
-      }),
-    ),
+    mergeMap(() => createReadStream('cedict.txt')),
     map((chunk) => chunk.toString() as string),
     mergeMap((chunk) => chunk.split(/\r\n/g)),
     map((s) =>
-      [...s.matchAll(regex)].flatMap(
+      Array.from(s.matchAll(regex)).flatMap(
         ([, word, pinyin, definition]) => [
           word,
           pinyin,

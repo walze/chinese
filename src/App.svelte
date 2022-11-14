@@ -10,6 +10,7 @@
   import { fromFetch } from 'rxjs/fetch';
   import List from './lib/List.svelte';
   import type { Data, ItemObject } from './vite-env';
+  import { numberToMark } from 'pinyin-utils';
 
   import { onMount } from 'svelte';
 
@@ -38,7 +39,7 @@
 
   const subject = new BehaviorSubject('');
   const input = subject.pipe(
-    throttleTime(100, undefined, { trailing: true }),
+    throttleTime(0, undefined, { trailing: true }),
   );
 
   let simplified = true;
@@ -46,10 +47,15 @@
   $: items = $input
     ? fuse
         .search($input, {
-          limit: 20,
+          limit: 10,
         })
         .map((r) => r.item)
     : [];
+
+  $: pinyin = $selected?.pinyin as string;
+
+  $: related =
+    $data?.filter((d) => d.pinyin.includes(pinyin)) || [];
 </script>
 
 <main class="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">
@@ -69,7 +75,7 @@
 
       <div>
         <span class="text-xl mb-4">
-          {$selected.pinyin}
+          {numberToMark($selected.pinyin)}
         </span>
         <br />
         拼音
@@ -129,4 +135,34 @@
 
     <List {items} {simplified} />
   </div>
+
+  <ul class="my-16">
+    {#each related as item}
+      <li class="mb-4">
+        {item.hanzi.split(' ')[simplified ? 1 : 0]}
+
+        <span class="text-neutral-400 ml-1 font-extralight">
+          {numberToMark(item.pinyin)}
+        </span>
+        <p class="font-light">
+          {item.def}
+        </p>
+      </li>
+    {/each}
+  </ul>
+
+  <section
+    class="font-thin mt-16 text-neutral-600 hover:text-neutral-400"
+  >
+    <h3 class="tracking-wide leading-8">Instructions</h3>
+
+    <p class="text-sm">
+      In the input box, you can type Pīn Yin, Hàn Zi, or English.
+      It will give you a list of options that matches best your
+      input. When using Pīn Yin, you can use the tone marks (ā,
+      á, ǎ, à, a) or the numbers (1, 2, 3, 4, 5). E.g. "zhong3"
+      or "zhǒng". Once selected, a list of related words will
+      appear below the input box.
+    </p>
+  </section>
 </main>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { ItemObject } from '../vite-env';
-  import { numberToMark } from 'pinyin-utils';
   import { selected } from './store';
 
   export let items: ItemObject[] = [];
@@ -8,7 +7,7 @@
 
   $: marks = items.map(({ hanzi, pinyin, def }) => [
     hanzi,
-    numberToMark(pinyin),
+    pinyin,
     def,
   ]);
 </script>
