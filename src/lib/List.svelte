@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { numberToMark } from 'pinyin-utils';
   import type { ItemObject } from '../vite-env';
   import { selected } from './store';
 
@@ -35,7 +36,9 @@
         }}
       >
         <span class="block truncate"
-          >{hanzi.split(' ')[simplified ? 1 : 0]} - {pinyin} - {def}</span
+          >{hanzi.split(' ')[simplified ? 1 : 0]} - {numberToMark(
+            pinyin,
+          )} - {def}</span
         >
       </li>
     {/each}
