@@ -84,7 +84,7 @@
 
       <div>
         <span class="text-xl mb-4">
-          {$selected.def}
+          {$selected.def.replaceAll('/', ' — ')}
         </span>
         <br />
         定義
