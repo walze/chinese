@@ -1,9 +1,11 @@
 <script lang="ts">
   import {
     BehaviorSubject,
-    debounceTime,
-    lastValueFrom,
+    map,
+    mergeAll,
     mergeMap,
+    throttleTime,
+    toArray,
   } from 'rxjs';
   import { fromFetch } from 'rxjs/fetch';
   import List from './lib/List.svelte';
@@ -16,6 +18,13 @@
 
   const data = fromFetch('./cedict.json').pipe(
     mergeMap((r) => r.json() as Promise<Data>),
+    mergeAll(),
+    map(([hanzi, pinyin, def]) => ({
+      hanzi,
+      pinyin,
+      def,
+    })),
+    toArray<ItemObject>(),
   );
 
   const fuse = new Fuse<ItemObject>([], {
@@ -24,33 +33,23 @@
   });
 
   onMount(async () => {
-    const d = (await lastValueFrom(data)).map(
-      ([hanzi, pinyin, def]) => ({
-        hanzi,
-        pinyin,
-        def,
-      }),
-    );
-
-    fuse.setCollection(d);
+    data.subscribe((d) => fuse.setCollection(d));
   });
 
   const subject = new BehaviorSubject('');
-  const input = subject.pipe(debounceTime(100));
+  const input = subject.pipe(
+    throttleTime(100, undefined, { trailing: true }),
+  );
 
   let simplified = true;
 
   $: items = $input
     ? fuse
         .search($input, {
-          limit: 10,
+          limit: 20,
         })
         .map((r) => r.item)
     : [];
-
-  $: {
-    console.log('color changed 1', simplified);
-  }
 </script>
 
 <main class="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">

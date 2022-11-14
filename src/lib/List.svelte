@@ -35,7 +35,6 @@
             selected.set({ hanzi, pinyin, def });
         }}
       >
-        <!-- Selected: "font-semibold" -->
         <span class="block truncate"
           >{hanzi.split(' ')[simplified ? 1 : 0]} - {pinyin} - {def}</span
         >
