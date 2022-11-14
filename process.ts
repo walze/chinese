@@ -9,25 +9,43 @@ import {
   toArray,
 } from 'rxjs';
 
-const file = createReadStream('cedict.txt', {
-  encoding: 'utf8',
-});
+import { fromFetch } from 'rxjs/fetch';
+
+import gz from 'node-gzip';
+
 const regex = /(.*)\s\[(.*)\]\s\/(.*)\//giu;
 
 try {
-  unlink('public/cedict.json', console.log);
+  unlink('./public/cedict.json', console.log);
+  unlink('./cedict.txt', console.log);
 } catch (error) {
   console.error(error);
 }
-const json = createWriteStream('public/cedict.json', {
+
+const gzip = createWriteStream('./cedict.txt', {
   encoding: 'utf8',
   autoClose: true,
-  flags: 'a',
-  emitClose: true,
 });
 
-from(file)
+const json = createWriteStream('./public/cedict.json', {
+  encoding: 'utf8',
+  autoClose: true,
+});
+
+fromFetch(
+  'https://www.mdbg.net/chinese/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz',
+)
   .pipe(
+    mergeMap((r) => r.arrayBuffer()),
+    mergeMap((r) => gz.ungzip(r)),
+    map((r) => r.toString()),
+    map((s) => gzip.write(s)),
+    map(() => gzip.close()),
+    mergeMap(() =>
+      createReadStream('cedict.txt', {
+        encoding: 'utf8',
+      }),
+    ),
     map((chunk) => chunk.toString() as string),
     mergeMap((chunk) => chunk.split(/\r\n/g)),
     map((s) =>
