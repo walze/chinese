@@ -16,6 +16,7 @@
 
   import Fuse from 'fuse.js';
   import { selected } from './lib/store';
+  import Hanzi from './lib/Hanzi.svelte';
 
   const data = fromFetch('./cedict.json').pipe(
     mergeMap((r) => r.json() as Promise<Data>),
@@ -27,6 +28,8 @@
     })),
     toArray<ItemObject>(),
   );
+
+  let hz: Hanzi | null = null;
 
   onMount(async () => {
     data.subscribe((d) => fuse.setCollection(d));
@@ -59,9 +62,9 @@
       class="mx-auto p-6 rounded flex flex-col gap-y-8 text-center mb-10 border border-neutral-700"
     >
       <div>
-        <p class="text-8xl mb-2">
-          {$selected.hanzi.split(' ')[simplified ? 1 : 0]}
-        </p>
+        <Hanzi
+          chars={$selected.hanzi.split(' ')[simplified ? 1 : 0]}
+        />
         漢字
         <span class="text-neutral-600 absolute ml-3 font-thin"
           >Hàn Zi</span

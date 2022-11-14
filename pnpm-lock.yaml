@@ -10,6 +10,7 @@ specifiers:
   autoprefixer: ^10.4.13
   browser-assert: ^1.2.1
   fuse.js: ^6.6.2
+  hanzi-writer: ^3.4.0
   i: ^0.3.7
   node-fetch: ^3.3.0
   node-gzip: ^1.1.2
@@ -39,6 +40,7 @@ dependencies:
   autoprefixer: 10.4.13_postcss@8.4.19
   browser-assert: 1.2.1
   fuse.js: 6.6.2
+  hanzi-writer: 3.4.0
   i: 0.3.7
   node-fetch: 3.3.0
   node-gzip: 1.1.2
@@ -145,7 +147,7 @@ packages:
       kleur: 4.1.5
       magic-string: 0.26.7
       svelte: 3.53.1
-      svelte-hmr: 0.15.0_svelte@3.53.1
+      svelte-hmr: 0.15.1_svelte@3.53.1
       vite: 3.2.3_ajklay5k626t46b6fyghkbup3i
     transitivePeerDependencies:
       - supports-color
@@ -779,6 +781,10 @@ packages:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
     dev: false
 
+  /hanzi-writer/3.4.0:
+    resolution: {integrity: sha512-u7AZ9CBBE4DuNRKpCdec2Dwgb0oBOlKEU2+jjfib+QeMQgXmtrJVxf1bl69Swi8XrBffYWUemKq/9Rn7YTK5aA==}
+    dev: false
+
   /has/1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
     engines: {node: '>= 0.4.0'}
@@ -1345,8 +1351,8 @@ packages:
       - sugarss
     dev: false
 
-  /svelte-hmr/0.15.0_svelte@3.53.1:
-    resolution: {integrity: sha512-Aw21SsyoohyVn4yiKXWPNCSW2DQNH/76kvUnE9kpt4h9hcg9tfyQc6xshx9hzgMfGF0kVx0EGD8oBMWSnATeOg==}
+  /svelte-hmr/0.15.1_svelte@3.53.1:
+    resolution: {integrity: sha512-BiKB4RZ8YSwRKCNVdNxK/GfY+r4Kjgp9jCLEy0DuqAKfmQtpL38cQK3afdpjw4sqSs4PLi3jIPJIFp259NkZtA==}
     engines: {node: ^12.20 || ^14.13.1 || >= 16}
     peerDependencies:
       svelte: '>=3.19.0'

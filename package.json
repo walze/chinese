@@ -20,6 +20,7 @@
     "autoprefixer": "^10.4.13",
     "browser-assert": "^1.2.1",
     "fuse.js": "^6.6.2",
+    "hanzi-writer": "^3.4.0",
     "i": "^0.3.7",
     "node-fetch": "^3.3.0",
     "node-gzip": "^1.1.2",
