@@ -28,34 +28,29 @@
     toArray<ItemObject>(),
   );
 
-  const fuse = new Fuse<ItemObject>([], {
-    includeScore: true,
-    keys: ['hanzi', 'pinyin', 'def'],
-  });
-
   onMount(async () => {
     data.subscribe((d) => fuse.setCollection(d));
   });
 
   const subject = new BehaviorSubject('');
+
+  const fuse = new Fuse<ItemObject>([], {
+    keys: ['hanzi', 'pinyin', 'def'],
+  });
   const input = subject.pipe(
-    throttleTime(0, undefined, { trailing: true }),
+    throttleTime(500, undefined, { trailing: true }),
   );
 
   let simplified = true;
 
   $: items = $input
-    ? fuse
-        .search($input, {
-          limit: 10,
-        })
-        .map((r) => r.item)
+    ? fuse.search($input).map((r) => r.item)
     : [];
 
   $: pinyin = $selected?.pinyin as string;
 
   $: related =
-    $data?.filter((d) => d.pinyin.includes(pinyin)) || [];
+    items?.filter((d) => d.pinyin.includes(pinyin)) || [];
 </script>
 
 <main class="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">
@@ -133,7 +128,7 @@
       >
     </fieldset>
 
-    <List {items} {simplified} />
+    <List items={items?.slice(0, 10)} {simplified} />
   </div>
 
   <ul class="my-16">
