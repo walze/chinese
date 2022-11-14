@@ -16,6 +16,7 @@ export default defineConfig({
   },
   build: {
     assetsDir: './',
+    minify: true,
     outDir: 'build',
     target: 'chrome100',
     modulePreload: {
