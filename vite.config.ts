@@ -14,6 +14,8 @@ export default defineConfig({
       injectRegister: 'script',
       outDir: 'build',
       manifest: {
+        name: 'Mandarin Learner Tool',
+        description: 'The Mandarin dictionary to help learners',
         theme_color: '#4e46e5',
         background_color: '#111111',
         lang: 'zh',
