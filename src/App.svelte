@@ -29,20 +29,22 @@
     toArray<ItemObject>(),
   );
 
-  let hz: Hanzi | null = null;
-
-  onMount(async () => {
-    data.subscribe((d) => fuse.setCollection(d));
-  });
-
   const subject = new BehaviorSubject('');
 
   const fuse = new Fuse<ItemObject>([], {
     keys: ['hanzi', 'pinyin', 'def'],
   });
+
   const input = subject.pipe(
-    throttleTime(500, undefined, { trailing: true }),
+    throttleTime(500, undefined, {
+      trailing: true,
+      leading: true,
+    }),
   );
+
+  onMount(() => {
+    data.subscribe((d) => fuse.setCollection(d));
+  });
 
   let simplified = true;
 
@@ -54,6 +56,10 @@
 
   $: related =
     items?.filter((d) => d.pinyin.includes(pinyin)) || [];
+
+  $: hanzi = $selected
+    ? $selected.hanzi.split(' ')[simplified ? 1 : 0]
+    : '';
 </script>
 
 <main class="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">
@@ -62,10 +68,8 @@
       class="mx-auto p-6 rounded flex flex-col gap-y-8 text-center mb-10 border border-neutral-700"
     >
       <div>
-        <Hanzi
-          chars={$selected.hanzi.split(' ')[simplified ? 1 : 0]}
-        />
-        漢字
+        <Hanzi chars={hanzi} />
+        汉字
         <span class="text-neutral-600 absolute ml-3 font-thin"
           >Hàn Zi</span
         >
@@ -137,7 +141,12 @@
   <ul class="my-16">
     {#each related as item}
       <li class="mb-4">
-        {item.hanzi.split(' ')[simplified ? 1 : 0]}
+        {@html item.hanzi
+          .split(' ')
+          [simplified ? 1 : 0].replaceAll(
+            hanzi,
+            `<span class="text-indigo-500">${hanzi}</span>`,
+          )}
 
         <span class="text-neutral-400 ml-1 font-extralight">
           {numberToMark(item.pinyin)}
