@@ -145,7 +145,7 @@
           .split(' ')
           [simplified ? 1 : 0].replaceAll(
             hanzi,
-            `<span class="text-indigo-500">${hanzi}</span>`,
+            `<span class="text-indigo-600">${hanzi}</span>`,
           )}
 
         <span class="text-neutral-400 ml-1 font-extralight">
