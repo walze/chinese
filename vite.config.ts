@@ -18,7 +18,7 @@ export default defineConfig({
         short_name: 'Mandarin Tool',
         description: 'The Mandarin dictionary to help learners',
         theme_color: '#4e46e5',
-        background_color: '#111111',
+        background_color: '#eeeeee',
         lang: 'zh',
         icons: [
           {
