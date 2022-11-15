@@ -15,6 +15,7 @@ export default defineConfig({
       outDir: 'build',
       manifest: {
         name: 'Mandarin Learner Tool',
+        short_name: 'Mandarin Tool',
         description: 'The Mandarin dictionary to help learners',
         theme_color: '#4e46e5',
         background_color: '#111111',
