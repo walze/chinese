@@ -1,57 +1,33 @@
 <script lang="ts">
   import {
     BehaviorSubject,
+    fromEventPattern,
     map,
-    mergeAll,
-    mergeMap,
+    pipe,
     throttleTime,
-    toArray,
   } from 'rxjs';
-  import { fromFetch } from 'rxjs/fetch';
   import List from './lib/List.svelte';
-  import type { Data, ItemObject } from './vite-env';
+  import type { ItemObject } from './vite-env';
   import { numberToMark } from 'pinyin-utils';
 
-  import { onMount } from 'svelte';
-
-  import Fuse from 'fuse.js';
   import { selected } from './lib/store';
   import Hanzi from './lib/Hanzi.svelte';
 
-  const data = fromFetch('./cedict.json').pipe(
-    mergeMap((r) => r.json() as Promise<Data>),
-    mergeAll(),
-    map(([hanzi, pinyin, def]) => ({
-      hanzi,
-      pinyin,
-      def,
-    })),
-    toArray<ItemObject>(),
-  );
+  import DictWorker from './worker?worker';
 
-  const subject = new BehaviorSubject('');
+  const worker = new DictWorker();
+  const input = new BehaviorSubject('');
 
-  const fuse = new Fuse<ItemObject>([], {
-    keys: ['hanzi', 'pinyin', 'def'],
-  });
-
-  const input = subject.pipe(
-    throttleTime(500, undefined, {
-      trailing: true,
-      leading: true,
-    }),
-  );
-
-  onMount(() => {
-    data.subscribe((d) => fuse.setCollection(d));
-  });
+  $: worker.postMessage($input);
 
   let simplified = true;
 
-  $: items = $input
-    ? fuse.search($input).map((r) => r.item)
-    : [];
+  const data = fromEventPattern<MessageEvent<ItemObject[]>>(
+    (handler) => worker.addEventListener('message', handler),
+    (handler) => worker.removeEventListener('message', handler),
+  ).pipe(map((e) => e.data));
 
+  $: items = $data || [];
   $: pinyin = $selected?.pinyin as string;
 
   $: related =
@@ -110,7 +86,7 @@
   </label>
   <div class="relative mt-1">
     <input
-      on:input={(e) => subject.next(e.currentTarget.value)}
+      on:input={(e) => input.next(e.currentTarget.value)}
       id="combobox"
       type="text"
       autofocus
@@ -135,7 +111,7 @@
       >
     </fieldset>
 
-    <List items={items?.slice(0, 10)} {simplified} />
+    <List items={items?.slice(0, 100)} {simplified} />
   </div>
 
   <ul class="my-16">
