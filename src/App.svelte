@@ -3,7 +3,6 @@
     BehaviorSubject,
     fromEventPattern,
     map,
-    pipe,
     throttleTime,
   } from 'rxjs';
   import List from './lib/List.svelte';
@@ -14,18 +13,29 @@
   import Hanzi from './lib/Hanzi.svelte';
 
   import DictWorker from './worker?worker';
+  import { onMount } from 'svelte';
 
   const worker = new DictWorker();
   const input = new BehaviorSubject('');
-
-  $: worker.postMessage($input);
-
   let simplified = true;
 
   const data = fromEventPattern<MessageEvent<ItemObject[]>>(
     (handler) => worker.addEventListener('message', handler),
     (handler) => worker.removeEventListener('message', handler),
   ).pipe(map((e) => e.data));
+
+  onMount(() => {
+    input
+      .pipe(
+        throttleTime(300, undefined, {
+          leading: true,
+          trailing: true,
+        }),
+      )
+      .subscribe((value) => {
+        worker.postMessage(value);
+      });
+  });
 
   $: items = $data || [];
   $: pinyin = $selected?.pinyin as string;
