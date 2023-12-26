@@ -1,16 +1,22 @@
 import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import slugify from 'slugify';
 import { VitePWA } from 'vite-plugin-pwa';
+import solid from 'vite-plugin-solid';
+import { fileURLToPath } from 'url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src/', import.meta.url)),
+    },
+  },
   plugins: [
-    svelte(),
+    solid(),
     VitePWA({
       registerType: 'autoUpdate',
-      devOptions: { enabled: true },
+      devOptions: { enabled: false },
       injectRegister: 'script',
       outDir: 'build',
       manifest: {
