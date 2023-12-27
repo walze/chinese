@@ -9,7 +9,7 @@ import { numberToMark } from 'pinyin-utils';
 
 import Hanzi from './HanZi.tsx';
 
-import DictWorker from '../worker?worker';
+import DictWorker from './worker?worker';
 import List from './List.tsx';
 import { fromEventPattern, map } from 'rxjs';
 import use$ from './use$.ts';

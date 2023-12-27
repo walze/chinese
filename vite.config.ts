@@ -41,13 +41,14 @@ export default defineConfig({
       },
     }),
   ],
-  optimizeDeps: {
-    disabled: false,
-    force: true,
-    include: ['browser-assert'],
+  worker: {
+    format: 'es',
   },
   esbuild: {
     target: 'chrome100',
+    supported: {
+      'top-level-await': true, //browsers can handle top-level-await features
+    },
   },
   build: {
     assetsDir: './',
@@ -66,10 +67,7 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
 
-          return slugify(
-            id.split('/').pop()?.split('.').shift() ??
-              'vendor.js',
-          ).toLowerCase();
+          return slugify('vendor.js').toLowerCase();
         },
       },
     },
