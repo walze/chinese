@@ -12,7 +12,11 @@ import {
 } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { openDB, type DBSchema } from 'idb';
-import { ItemObject } from '../vite-env';
+import {
+  ItemObject,
+  WorkerEvent,
+  WorkerType,
+} from '../vite-env';
 
 const regex = /(.*)\s\[(.*)\]\s\/(.*)\//giu;
 
@@ -69,14 +73,17 @@ from(db.get('cedict', 'txt').catch(() => null))
     fuse.setCollection(d);
   });
 
-self.addEventListener('message', (e) => {
-  self.postMessage(
-    e.data
-      ? fuse
-          .search(e.data, {
+self.addEventListener('message', (e: WorkerEvent<string>) => {
+  switch (e.data.type) {
+    case 'input':
+      self.postMessage(
+        fuse
+          .search(e.data.data, {
             limit: 100,
           })
           .map((r) => r.item)
-      : [],
-  );
+          .sort((a, b) => a.hanzi.localeCompare(b.hanzi)),
+      );
+      break;
+  }
 });

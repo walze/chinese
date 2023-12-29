@@ -3,8 +3,14 @@ import {
   onCleanup,
   onMount,
   createEffect,
+  For,
+  Accessor,
 } from 'solid-js';
-import { ItemObject } from '../vite-env';
+import {
+  ItemObject,
+  WorkerEvent,
+  WorkerType,
+} from '../vite-env';
 import { numberToMark } from 'pinyin-utils';
 
 import Hanzi from './HanZi.tsx';
@@ -13,51 +19,74 @@ import DictWorker from './worker?worker';
 import List from './List.tsx';
 import { fromEventPattern, map } from 'rxjs';
 import use$ from './use$.ts';
+import { store } from './store.ts';
+import { Related } from './Related.tsx';
 
-const worker = new DictWorker();
+const useWorker = function <R, T>(
+  type: WorkerType,
+  data: Accessor<T>,
+  init: R,
+) {
+  const worker = new DictWorker();
 
-const App = () => {
-  const data = use$(
-    fromEventPattern<MessageEvent<ItemObject[]>>(
+  const d = use$(
+    fromEventPattern<MessageEvent<R>>(
       (handler) => worker.addEventListener('message', handler),
       (handler) =>
         worker.removeEventListener('message', handler),
     ).pipe(map((e) => e.data)),
+    init,
+  );
+
+  createEffect(() => {
+    const obj: WorkerEvent<T>['data'] = {
+      type,
+      data: data(),
+    };
+
+    worker.postMessage(obj);
+  });
+
+  return d;
+};
+
+const App = () => {
+  const [s] = store;
+  const [selected] = createSignal(s.selected);
+  const [input, setInput] = createSignal('');
+
+  const data = useWorker('input', input, [] as ItemObject[]);
+
+  const related = useWorker(
+    'input',
+    selected,
     [] as ItemObject[],
   );
 
-  const [selected, setSelected] =
-    createSignal<ItemObject | null>(null);
-
-  const [input, setInput] = createSignal('');
-  let simplified = true;
-
-  const pinyin = selected()?.pinyin as string;
-
-  const hanzi = selected()
-    ? selected()?.hanzi.split(' ')[simplified ? 1 : 0]
-    : '';
-
+  // effect to clear input on select
   createEffect(() => {
-    console.log({
-      hanzi,
-      data: data(),
-      pinyin,
-      def: selected()?.def,
-    });
+    if (s.selected) {
+      setInput('');
+    }
   });
 
   createEffect(() => {
-    worker.postMessage(input());
+    console.log({
+      data: data(),
+      input: input(),
+      store: s,
+    });
   });
 
   return (
     <>
       <main class="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">
-        {selected() && (
+        {s.selected && (
           <section class="mx-auto p-6 rounded flex flex-col gap-y-8 text-center mb-10 border border-neutral-700">
             <div>
-              {hanzi && <Hanzi chars={hanzi} />}
+              {s.selected?.hanzi && (
+                <Hanzi chars={s.selected?.hanzi} />
+              )}
               汉字
               <span class="text-neutral-600 absolute ml-3 font-thin">
                 Hàn Zi
@@ -66,7 +95,7 @@ const App = () => {
 
             <div>
               <span class="text-xl mb-4">
-                {numberToMark(selected()?.pinyin as string)}
+                {numberToMark(s.selected?.pinyin as string)}
               </span>
               <br />
               拼音
@@ -77,7 +106,7 @@ const App = () => {
 
             <div>
               <span class="text-xl mb-4">
-                {selected()?.def.replaceAll('/', ' — ')}
+                {s.selected?.def.replaceAll('/', ' — ')}
               </span>
               <br />
               定義
@@ -101,6 +130,7 @@ const App = () => {
         <div class="relative mt-1">
           <input
             onInput={(e) => setInput(e.currentTarget.value)}
+            value={input()}
             id="combobox"
             type="text"
             autofocus
@@ -112,7 +142,7 @@ const App = () => {
 
           <fieldset class="absolute">
             <input
-              checked={simplified}
+              checked={s.simplified}
               type="checkbox"
               name="simplified"
               id="simplified"
@@ -125,9 +155,25 @@ const App = () => {
               Simplified?
             </label>
           </fieldset>
+
+          {data()?.length && <List items={data()} />}
         </div>
 
-        <List simplified={simplified} items={data() || []} />
+        <Related items={related()} />
+
+        <section class="font-thin mt-16 text-neutral-600 hover:text-neutral-400">
+          <h3 class="tracking-wide leading-8">Instructions</h3>
+
+          <p class="text-sm">
+            In the input box, you can type Pīn Yin, Hàn Zi, or
+            English. It will give you a list of options that
+            matches best your input. When using Pīn Yin, you can
+            use the tone marks (ā, á, ǎ, à, a) or the numbers (1,
+            2, 3, 4, 5). E.g. "zhong3" or "zhǒng". Once selected,
+            a list of related words will appear below the input
+            box.
+          </p>
+        </section>
       </main>
     </>
   );

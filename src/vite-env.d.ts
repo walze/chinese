@@ -23,3 +23,10 @@ export type ItemObject = {
   pinyin: string;
   def: string;
 };
+
+export type WorkerType = 'init' | 'input' | 'query';
+
+export type WorkerEvent<T> = MessageEvent<{
+  type: WorkerType;
+  data: T;
+}>;
