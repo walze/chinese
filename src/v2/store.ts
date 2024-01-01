@@ -11,7 +11,7 @@ type Store = {
 };
 
 export const fixSimple = (s: string, b: boolean) =>
-  s.split(' ')[b ? 0 : 1];
+  s.split(' ')[b ? 1 : 0];
 
 export const store = create<Store>((st, s) => ({
   selected: null,

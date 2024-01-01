@@ -118,7 +118,7 @@ const App = () => {
                 {selected?.def.replaceAll('/', ' — ')}
               </span>
               <br />
-              定義
+              定义
               <span className="text-neutral-600 absolute ml-3 font-thin">
                 Definition
               </span>

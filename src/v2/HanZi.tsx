@@ -1,5 +1,5 @@
 import Hanzi from 'hanzi-writer';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const makeHanzi = (
   el: HTMLDivElement,
@@ -8,7 +8,7 @@ const makeHanzi = (
 ) => {
   const w = Math.min(238 / chars.length, 75);
 
-  return new Hanzi(el, {
+  return Hanzi.create(el, char, {
     strokeColor: '#fff',
     outlineColor: '#222',
     strokeAnimationSpeed: 1,
@@ -38,26 +38,32 @@ const HanziComponent = (props: { chars: string }) => {
   const { chars } = props;
 
   const container = useRef<HTMLDivElement>(null);
+  const [els, setEls] = useState<
+    (readonly [string, HTMLDivElement])[]
+  >([]);
 
   useEffect(() => {
-    const els = [...chars].map(async (char) => {
-      const el = document.createElement('div');
+    const els = [...chars].map((char) => {
+      const div = document.createElement('div');
+      div.className = 'hanzi';
+      div.dataset.hanzi = char;
 
-      const hz = makeHanzi(el, char, chars);
-
-      await hz.setCharacter(char);
-      hz.loopCharacterAnimation();
-
-      return el;
+      return [char, div] as const;
     });
 
-    Promise.all(els).then(console.log);
+    setEls(() => els);
+  }, [chars]);
 
-    if (container.current)
-      Promise.all(els).then((els) => {
-        container.current?.replaceChildren(...els);
-      });
-  });
+  useEffect(() => {
+    container.current?.replaceChildren(
+      ...els.map(([, el]) => el),
+    );
+
+    for (const [char, el] of els) {
+      const hz = makeHanzi(el, char, chars);
+      hz.loopCharacterAnimation();
+    }
+  }, [els]);
 
   return (
     <div

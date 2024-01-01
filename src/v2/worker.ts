@@ -101,8 +101,6 @@ self.addEventListener('message', (e: WorkerEvent<string>) => {
       })
       // sort by score high to low
       .sort((a, b) => a.score! - b.score!)
-      // sort by length low to high
-      .sort((a, b) => a.item.hanzi.length - b.item.hanzi.length)
       .map((r) => r.item);
 
     self.postMessage(mkEvent(type, data));
