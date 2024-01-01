@@ -10,10 +10,13 @@ type Store = {
   select: (item: ItemObject) => void;
 };
 
+export const fixSimple = (s: string, b: boolean) =>
+  s.split(' ')[b ? 0 : 1];
+
 export const store = create<Store>((st, s) => ({
   selected: null,
   select: (item) => {
-    const hanzi = item?.hanzi[s().simplified ? 0 : 1];
+    const hanzi = fixSimple(item.hanzi, s().simplified);
 
     st({
       selected: { ...item, hanzi },

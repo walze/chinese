@@ -1,7 +1,10 @@
 import { numberToMark } from 'pinyin-utils';
 import { store } from './store';
+import { ItemObject } from '../vite-env';
 
-interface ListProps {}
+interface ListProps {
+  list: ItemObject[];
+}
 
 const hash = (s: string) => {
   let h = 0;
@@ -15,8 +18,8 @@ const hash = (s: string) => {
 
 const List = (p: ListProps) => {
   const simplified = store((s) => s.simplified);
-  const suggestions = store((s) => s.suggestions);
   const select = store((s) => s.select);
+  const suggestions = p.list;
 
   const handleClick = (
     hanzi: string,

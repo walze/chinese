@@ -1,37 +1,28 @@
 import { numberToMark } from 'pinyin-utils';
 import { ItemObject } from '../vite-env';
-import { store } from './store';
+import { fixSimple, store } from './store';
 
 type Props = {
   items: ItemObject[];
 };
 
-export const isHanzi = (s: string) => {
-  return s.length === 1 && s.charCodeAt(0) > 19968;
-};
-
 export const Related = (p: Props) => {
-  const s = store.getState();
+  const selected = store((s) => s.selected);
+  const simplified = store((s) => s.simplified);
   const data = p.items;
 
-  console.log(data.slice(0, 5));
-
-  if (!s.selected) {
-    return <>No results</>;
-  }
-
   const d =
-    data
-      ?.slice(0, 5)
-      .filter((d) =>
-        d.pinyin.includes(s.selected?.pinyin || ''),
-      ) || ([] as ItemObject[]);
+    data.filter((d) =>
+      d.hanzi.includes(selected?.hanzi || ''),
+    ) || ([] as ItemObject[]);
 
   return (
     <ul className="my-16">
       {d.map((item) => (
-        <li className="mb-4">
-          <span className="text-indigo-600">{item.hanzi}</span>
+        <li className="mb-4" key={item.hanzi + item.pinyin}>
+          <span className="text-indigo-600">
+            {fixSimple(item.hanzi, simplified)}
+          </span>
 
           <span className="text-neutral-400 ml-1 font-extralight">
             {numberToMark(item.pinyin)}

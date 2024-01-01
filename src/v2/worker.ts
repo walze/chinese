@@ -34,6 +34,10 @@ const db = await openDB<MyDB>('mandarin', 1, {
 
 const fuse = new Fuse<ItemObject>([], {
   keys: ['hanzi', 'pinyin', 'def'],
+  shouldSort: true,
+  includeScore: true,
+  includeMatches: true,
+  ignoreLocation: true,
 });
 
 const fetchData = () =>
@@ -95,8 +99,11 @@ self.addEventListener('message', (e: WorkerEvent<string>) => {
       .search(e.data.data, {
         limit: 100,
       })
-      .map((r) => r.item)
-      .sort((a, b) => a.hanzi.localeCompare(b.hanzi));
+      // sort by score high to low
+      .sort((a, b) => a.score! - b.score!)
+      // sort by length low to high
+      .sort((a, b) => a.item.hanzi.length - b.item.hanzi.length)
+      .map((r) => r.item);
 
     self.postMessage(mkEvent(type, data));
   }

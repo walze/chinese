@@ -11,7 +11,7 @@ import { ItemObject, WorkerEvent } from '../vite-env';
 import { useEffect, useRef, useState } from 'react';
 import { store } from './store.ts';
 
-const useObjectDiff = (obj: any) => {
+export const useObjectDiff = (obj: any) => {
   const prevObjRef = useRef<any>(obj);
 
   useEffect(() => {
@@ -48,18 +48,16 @@ const App = () => {
   const related = store((s) => s.related);
   const simplified = store((s) => s.simplified);
 
-  useObjectDiff({
-    selected,
-    suggestions,
-    related,
-    simplified,
-    input,
-    message,
-  });
+  useObjectDiff(store());
 
   useEffect(() => {
     switch (message.type) {
       case 'init':
+        break;
+      case 'query':
+        store.setState({
+          related: message.data,
+        });
         break;
       case 'input':
         store.setState({
@@ -70,6 +68,8 @@ const App = () => {
   }, [message]);
 
   useEffect(() => {
+    if (!input) return;
+
     worker.postMessage({
       type: 'input',
       data: input,
@@ -77,12 +77,14 @@ const App = () => {
   }, [input]);
 
   useEffect(() => {
-    if (selected?.hanzi) {
-      worker.postMessage({
-        type: 'related',
-        data: selected.hanzi,
-      });
-    }
+    if (!selected) return;
+
+    store.setState({ suggestions: [] });
+    setInput('');
+    worker.postMessage({
+      type: 'query',
+      data: selected.pinyin,
+    });
   }, [selected?.hanzi]);
 
   return (
@@ -168,7 +170,7 @@ const App = () => {
             </label>
           </fieldset>
 
-          {suggestions?.length && <List items={suggestions} />}
+          {suggestions?.length && <List list={suggestions} />}
         </div>
 
         <Related items={related} />
