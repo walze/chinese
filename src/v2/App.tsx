@@ -90,8 +90,10 @@ const App = () => {
   return (
     <>
       <main className="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">
-        <CardSmall hanzi="你" pinyin="nǐ" def="hello" />
-        <CardSmall hanzi="好" pinyin="hǎo" def="hello" />
+        <div className="flex">
+          <CardSmall hanzi="你" pinyin="nǐ" def="hello" />
+          <CardSmall hanzi="好" pinyin="hǎo" def="hello" />
+        </div>
 
         {selected && <CardSmall {...selected} />}
 
@@ -167,14 +169,14 @@ const App = () => {
 export default App;
 function CardSmall(selected: ItemObject) {
   return (
-    <section className="mx-2 py-6 rounded flex flex-col text-center mb-10 border border-neutral-700">
+    <section className="w-1/2 mx-2 py-5 rounded flex flex-col text-center mb-10 border border-neutral-700 cursor-pointer">
       {selected?.hanzi && <Hanzi chars={selected?.hanzi} />}
 
-      <span className="text-xl mb-4">
+      <span className="text-xl">
         {numberToMark(selected?.pinyin as string)}
       </span>
 
-      <span className="text-xl my-2">
+      <span className="text-xl my-2 hidden">
         {selected?.def.replaceAll('/', ' — ')}
       </span>
     </section>
