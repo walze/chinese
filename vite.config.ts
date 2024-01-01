@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
-import slugify from 'slugify';
 import { VitePWA } from 'vite-plugin-pwa';
 import react from '@vitejs/plugin-react-swc';
 import { fileURLToPath } from 'url';
+import slugify from 'slugify';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -67,7 +67,7 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
 
-          return slugify('vendor.js').toLowerCase();
+          return slugify.default('vendor.js').toLowerCase();
         },
       },
     },

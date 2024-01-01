@@ -90,41 +90,10 @@ const App = () => {
   return (
     <>
       <main className="mx-auto max-w-[320px] p-4 pt-6 text-slate-50">
-        {selected && (
-          <section className="mx-auto p-6 rounded flex flex-col gap-y-8 text-center mb-10 border border-neutral-700">
-            <div>
-              {selected?.hanzi && (
-                <Hanzi chars={selected?.hanzi} />
-              )}
-              汉字
-              <span className="text-neutral-600 absolute ml-3 font-thin">
-                Hàn Zi
-              </span>
-            </div>
+        <CardSmall hanzi="你" pinyin="nǐ" def="hello" />
+        <CardSmall hanzi="好" pinyin="hǎo" def="hello" />
 
-            <div>
-              <span className="text-xl mb-4">
-                {numberToMark(selected?.pinyin as string)}
-              </span>
-              <br />
-              拼音
-              <span className="text-neutral-600 absolute ml-3 font-thin">
-                Pīn Yin
-              </span>
-            </div>
-
-            <div>
-              <span className="text-xl mb-4">
-                {selected?.def.replaceAll('/', ' — ')}
-              </span>
-              <br />
-              定义
-              <span className="text-neutral-600 absolute ml-3 font-thin">
-                Definition
-              </span>
-            </div>
-          </section>
-        )}
+        {selected && <CardSmall {...selected} />}
 
         <label
           htmlFor="combobox"
@@ -196,3 +165,18 @@ const App = () => {
 };
 
 export default App;
+function CardSmall(selected: ItemObject) {
+  return (
+    <section className="mx-2 py-6 rounded flex flex-col text-center mb-10 border border-neutral-700">
+      {selected?.hanzi && <Hanzi chars={selected?.hanzi} />}
+
+      <span className="text-xl mb-4">
+        {numberToMark(selected?.pinyin as string)}
+      </span>
+
+      <span className="text-xl my-2">
+        {selected?.def.replaceAll('/', ' — ')}
+      </span>
+    </section>
+  );
+}

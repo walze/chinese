@@ -1,0 +1,11 @@
+{
+  "parser": "postcss-scss",
+  "map": false,
+  "plugins": {
+    "tailwindcss": {},
+    "postcss-plugin": {},
+    "postcss-utilities": {},
+    "@csstools/postcss-sass": {},
+    "autoprefixer": {}
+  }
+}

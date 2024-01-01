@@ -1,4 +1,6 @@
-/* @refresh reload */
+import '../tailwind.scss';
+import '../app.sass';
+
 import { StrictMode } from 'react';
 import App from './App';
 import { createRoot } from 'react-dom/client';

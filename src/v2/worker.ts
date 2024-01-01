@@ -92,6 +92,9 @@ self.addEventListener('message', (e: WorkerEvent<string>) => {
     case 'query':
       search(e.data.type);
       break;
+    case 'find':
+      self.postMessage(mkEvent('init', null));
+      break;
   }
 
   function search(type: WorkerType) {
@@ -99,8 +102,6 @@ self.addEventListener('message', (e: WorkerEvent<string>) => {
       .search(e.data.data, {
         limit: 100,
       })
-      // sort by score high to low
-      .sort((a, b) => a.score! - b.score!)
       .map((r) => r.item);
 
     self.postMessage(mkEvent(type, data));

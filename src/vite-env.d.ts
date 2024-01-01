@@ -24,7 +24,7 @@ export type ItemObject = {
   def: string;
 };
 
-export type WorkerType = 'init' | 'input' | 'query';
+export type WorkerType = 'init' | 'input' | 'query' | 'find';
 
 export type WorkerEvent<T> = MessageEvent<{
   type: WorkerType;
