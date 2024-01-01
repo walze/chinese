@@ -1,21 +1,33 @@
 import { numberToMark } from 'pinyin-utils';
 import { store } from './store';
-import { ItemObject } from '../vite-env';
 
-interface ListProps {
-  items: ItemObject[];
-}
+interface ListProps {}
+
+const hash = (s: string) => {
+  let h = 0;
+
+  for (let i = 0; i < s.length; i++) {
+    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  }
+
+  return h;
+};
 
 const List = (p: ListProps) => {
-  const s = store.getState();
+  const simplified = store((s) => s.simplified);
+  const suggestions = store((s) => s.suggestions);
+  const select = store((s) => s.select);
 
   const handleClick = (
-    _hanzi: string,
+    hanzi: string,
     pinyin: string,
     def: string,
   ) => {
-    const hanzi = _hanzi.split(' ')[s.simplified ? 1 : 0];
-    s.setStore({ selected: { hanzi, pinyin, def } });
+    select({
+      hanzi,
+      pinyin,
+      def,
+    });
   };
 
   return (
@@ -24,17 +36,17 @@ const List = (p: ListProps) => {
       id="options"
       role="listbox"
     >
-      {p.items?.map(({ hanzi, pinyin, def }, i) => (
+      {suggestions?.map(({ hanzi, pinyin, def }, i) => (
         <li
           className="relative py-2 pl-3 pr-9 text-gray-900 hover:bg-slate-200 cursor-pointer"
           id={`option-${i}`}
-          key={hanzi}
+          key={hash(hanzi + pinyin + def)}
           role="option"
           tabIndex={i}
           onClick={() => handleClick(hanzi, pinyin, def)}
         >
           <span className="block truncate">
-            {hanzi.split(' ')[s.simplified ? 1 : 0]} -{' '}
+            {hanzi.split(' ')[simplified ? 1 : 0]} -{' '}
             {numberToMark(pinyin)} - {def}
           </span>
         </li>

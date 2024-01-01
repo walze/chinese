@@ -7,11 +7,19 @@ type Store = {
   suggestions: ItemObject[];
   related: ItemObject[];
   set: (store: Partial<Store>) => void;
+  select: (item: ItemObject) => void;
 };
 
-export const store = create<Store>((st) => ({
+export const store = create<Store>((st, s) => ({
   selected: null,
-  simplified: false,
+  select: (item) => {
+    const hanzi = item?.hanzi[s().simplified ? 0 : 1];
+
+    st({
+      selected: { ...item, hanzi },
+    });
+  },
+  simplified: true,
   suggestions: [],
   related: [],
   set: (store) => st((s) => ({ ...s, ...store })),
