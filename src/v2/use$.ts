@@ -1,17 +1,13 @@
-import { Observable, Subscription } from 'rxjs';
-import { createSignal, onCleanup, onMount } from 'solid-js';
+import { useEffect, useState } from 'react';
+import { Observable } from 'rxjs';
 
-export default function <T, I>(o: Observable<T>, init: I) {
-  const [value, setV] = createSignal<T | I>(init);
-  const [sub, setSub] = createSignal<Subscription | null>(null);
+export default function <T>(o: Observable<T>, init: T) {
+  const [state, setState] = useState(init);
 
-  onMount(() => {
-    setSub(o.subscribe(setV));
-  });
+  useEffect(() => {
+    const sub = o.subscribe((t) => setState(t));
+    return () => sub.unsubscribe();
+  }, []);
 
-  onCleanup(() => {
-    sub()?.unsubscribe();
-  });
-
-  return value;
+  return state;
 }

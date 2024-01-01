@@ -1,11 +1,5 @@
-import {
-  createEffect,
-  Component,
-  splitProps,
-  onCleanup,
-} from 'solid-js';
 import Hanzi from 'hanzi-writer';
-let container: HTMLDivElement;
+import { useEffect, useRef } from 'react';
 
 const makeHanzi = (
   el: HTMLDivElement,
@@ -40,10 +34,12 @@ const makeHanzi = (
   });
 };
 
-const HanziComponent: Component<{ chars: string }> = (props) => {
-  const [{ chars }] = splitProps(props, ['chars']);
+const HanziComponent = (props: { chars: string }) => {
+  const { chars } = props;
 
-  createEffect(async () => {
+  const container = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
     const els = [...chars].map(async (char) => {
       const el = document.createElement('div');
 
@@ -57,18 +53,16 @@ const HanziComponent: Component<{ chars: string }> = (props) => {
 
     Promise.all(els).then(console.log);
 
-    if (container)
-      container.replaceChildren(...(await Promise.all(els)));
-  });
-
-  onCleanup(() => {
-    console.log('cleanup');
+    if (container.current)
+      Promise.all(els).then((els) => {
+        container.current?.replaceChildren(...els);
+      });
   });
 
   return (
     <div
       ref={container}
-      class="w-full flex justify-center items-center -mt-2 mb-2 font-bold text-xl"
+      className="w-full flex justify-center items-center -mt-2 mb-2 font-bold text-xl"
     >
       {/* Render the Hanzi characters */}
     </div>

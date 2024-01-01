@@ -73,17 +73,31 @@ from(db.get('cedict', 'txt').catch(() => null))
     fuse.setCollection(d);
   });
 
+const mkEvent = <T>(type: WorkerType, data: T) => ({
+  type,
+  data,
+});
+
 self.addEventListener('message', (e: WorkerEvent<string>) => {
+  console.log(`Worker received ${e.data.type}`, e);
+
   switch (e.data.type) {
     case 'input':
-      self.postMessage(
-        fuse
-          .search(e.data.data, {
-            limit: 100,
-          })
-          .map((r) => r.item)
-          .sort((a, b) => a.hanzi.localeCompare(b.hanzi)),
-      );
+      search(e.data.type);
       break;
+    case 'query':
+      search(e.data.type);
+      break;
+  }
+
+  function search(type: WorkerType) {
+    const data = fuse
+      .search(e.data.data, {
+        limit: 100,
+      })
+      .map((r) => r.item)
+      .sort((a, b) => a.hanzi.localeCompare(b.hanzi));
+
+    self.postMessage(mkEvent(type, data));
   }
 });

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import slugify from 'slugify';
 import { VitePWA } from 'vite-plugin-pwa';
-import solid from 'vite-plugin-solid';
+import react from '@vitejs/plugin-react-swc';
 import { fileURLToPath } from 'url';
 
 // https://vitejs.dev/config/
@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    solid(),
+    react(),
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: { enabled: false },
