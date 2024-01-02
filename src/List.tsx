@@ -1,6 +1,6 @@
 import { numberToMark } from 'pinyin-utils';
 import { store } from './store';
-import { ItemObject } from '../vite-env';
+import { ItemObject } from './vite-env';
 
 interface ListProps {
   list: ItemObject[];

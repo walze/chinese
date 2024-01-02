@@ -7,7 +7,7 @@ import List from './List.tsx';
 import { fromEventPattern, map } from 'rxjs';
 import use$ from './use$.ts';
 import { Related } from './Related.tsx';
-import { ItemObject, WorkerEvent } from '../vite-env';
+import { ItemObject, WorkerEvent } from './vite-env';
 import { useEffect, useRef, useState } from 'react';
 import { store } from './store.ts';
 

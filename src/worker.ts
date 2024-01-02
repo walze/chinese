@@ -12,11 +12,7 @@ import {
 } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { openDB, type DBSchema } from 'idb';
-import {
-  ItemObject,
-  WorkerEvent,
-  WorkerType,
-} from '../vite-env';
+import { ItemObject, WorkerEvent, WorkerType } from './vite-env';
 
 const regex = /(.*)\s\[(.*)\]\s\/(.*)\//giu;
 

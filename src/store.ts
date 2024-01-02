@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ItemObject } from '../vite-env';
+import type { ItemObject } from './vite-env';
 
 type Store = {
   selected: ItemObject | null;

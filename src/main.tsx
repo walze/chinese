@@ -1,5 +1,5 @@
-import '../tailwind.scss';
-import '../app.sass';
+import './tailwind.scss';
+import './app.sass';
 
 import { StrictMode } from 'react';
 import App from './App';

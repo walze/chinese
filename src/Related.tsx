@@ -1,5 +1,5 @@
 import { numberToMark } from 'pinyin-utils';
-import { ItemObject } from '../vite-env';
+import { ItemObject } from './vite-env';
 import { fixSimple, store } from './store';
 
 type Props = {
